@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Back End Assessment</title>
+  </head>
+  <body class="container">
+    <button id="complimentButton">Get a compliment</button>
+    <br>
+    <button id="fortuneButton">Your fortune</button>
+    <br>
+    <!--
+    <h1>What inspires you?</h1>
+    <h3>Fill out the form below to find out!</h3>
+    <form>
+      <input
+          type="text"
+          id="name"
+          placeholder="Enter your name"
+      />
+      <input
+      type="text"
+      id="age"
+      placeholder="Age"
+      />
+      <label for="drop-down">Careers:</label>
+      <select name="drop-down" id="drop-down">
+        <option value="one" id="select">Select</option>
+        <option value="one" id="computer">Computer Science</option>
+        <option value="two" id="medical">Medical</option>
+        <option value="three" id="athletics">Athletics</option>
+        <option value="other" id="other">Other</option>
+      </select>
+      <button id="submit">submit</button>
+    </form>
+    <ul id="inspirations" class=""></ul>
+    -->
+    <br>
+    <main>
+    <form>
+      <input 
+          type='text'
+          id="goal"
+          placeholder="Your Goal"/>
+
+          <textarea id="textbox" cols="40" rows="8">
+            Enter your plan here
+            </textarea>
+
+          <input 
+          type='text'
+          id="img"
+          placeholder='URL of motivational quote'/>
+      <section id="days-goals-met">
+
+          <p>Timeframe</p>
+          <input type="number" class="quantity" name="quantity" min="1" max="365" placeholder="Days" id="timeframe">
+
+      <button id="add-goal">add goal</button>
+  </form>
+
+  <section id="goals-container">
+    
+  </section>
+
+  </main>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="main.js"></script>
+    
+  </body>
+</html>
