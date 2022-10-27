@@ -1,3 +1,4 @@
+
 const complimentBtn = document.getElementById("complimentButton")
 
 const getCompliment = () => {
@@ -23,63 +24,104 @@ const getFortune = () => {
 fortuneBtn.addEventListener('click', getFortune)
 
 
-const goalsContainer = document.querySelector('#goals-container')
-const form = document.querySelector('form')
+const exerciseForm = document.getElementById("exercise-form")
+const exerciseNameInput = document.getElementById("exercise-name-input")
+const repCountInput = document.getElementById("exercise-input")
+const deletionForm = document.getElementById("delete-form")
+const deleteIdInput = document.getElementById("delete-exercise-input")
+const counterForm = document.getElementById("counter-form")
+const counterInput = document.getElementById("counter-input")
+const resultsSection = document.getElementById("results-section")
 
-const goalsCallback = ({ data: goals }) => displayGoals(goals)
-const errCallback = err => console.log(err.response.data)
-const baseURL = "http://localhost:4000/api/goals"
-const getGoals = () => axios.get(baseURL).then(goalsCallback).catch(errCallback)
-const createGoal = body => axios.post(baseURL, body).then(goalsCallback).catch(errCallback)
-const deleteGoal = id => axios.delete(`${baseURL}/${id}`).then(goalsCallback).catch(errCallback)
-const updateGoal = (id, type) => axios.put(`${baseURL}/${id}`, {type}).then(goalsCallback).catch(errCallback)
+const createExercise = (event) => {
+    event.preventDefault()
 
-function submitHandler(e) {
-    e.preventDefault()
+    eraseResultsSection()
 
-    let goal = document.querySelector('#goal')
-    let timeframe = document.querySelector('#timeframe')
-    let imageURL = document.querySelector('#img')
-    let textBox = document.querySelector("#textbox")
-
-    let bodyObj = {
-        goal: goal.value,
-        timeframe: timeframe.value, 
-        imageURL: imageURL.value,
-        textBox: textBox.value,
+    const myBody = {
+        name: exerciseNameInput.value,
+        repCount: repCountInput.value,
     }
 
-    createGoal(bodyObj)
+    exerciseNameInput.value = ''
+    repCountInput.value = ''
 
-    goal.value = ''
-    timeframe.checked = false
-    imageURL.value = ''
-    textBox.value = ''
+    axios.post("http://localhost:4000/api/create/", myBody)
+    .then((response) => {
+        let db = response.data
+        for (let i = 0; i < db.length; i++) {
+            displayExercise(db[i])
+        }
+    })
+    .catch((err) => {
+        console.log(err)
+    })
 }
 
-function createGoalSection(goal) {
-    const goalSection = document.createElement('div')
-    goalSection.classList.add('goal-section')
+function deleteExercise(event) {
+    event.preventDefault()
 
-    goalSection.innerHTML = `<img alt='quote' src=${goal.imageURL} class="quote-image"/>
-    <p class="goal-title">${goal.title}</p>
-    <div class="btns-container">
-        <button onclick="updateGoal(${goal.id}, 'minus')">-</button>
-        <p class="goal-time">${goal.timeframe} days</p>
-        <button onclick="updateGoal(${goal.id}, 'plus')">+</button>
-    </div>
-    <button onclick="deleteGoal(${goal.id})">delete</button>
-    `
+    eraseResultsSection()
 
+    deleteId = deleteIdInput.value
 
-    goalsContainer.appendChild(goalSection)
+    axios.delete("http://localhost:4000/api/delete/" + deleteId)
+    .then((response) => {
+        let db = response.data
+        for (let i = 0; i < db.length; i++) {
+            displayExercise(db[i])
+        }
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+
+    deleteIdInput.value = ''
 }
 
-function displayGoals(arr) {
-    goalsContainer.innerHTML = ``
-    for (let i = 0; i < arr.length; i++) {
-        createGoalSection(arr[i])
-    }
+function addRep(event) {
+    event.preventDefault()
+
+    eraseResultsSection()
+
+    counter = counterInput.value
+
+    axios.put("http://localhost:4000/api/add/?id=" + counter)
+    .then((response) => {
+        let db = response.data
+        for (let i = 0; i < db.length; i++) {
+            displayExercise(db[i])
+        }
+    })
+    .catch((err) => {
+        console.log(err)
+    })
 }
 
-form.addEventListener('submit', submitHandler)
+function displayExercise(exercise) {
+    let container = document.createElement('div')
+    let nameEl = document.createElement('li')
+    let repCountEl = document.createElement('li')
+    let idEl = document.createElement('li')
+
+    nameEl.innerHTML = 'Exercise: ' + exercise.name
+    repCountEl.innerHTML = 'Rep: ' + exercise.repCount
+    idEl.innerHTML = 'ID Number: ' + exercise.id
+
+    container.appendChild(nameEl)
+    container.appendChild(repCountEl)
+    container.appendChild(idEl)
+
+    container.classList.add('exercise-container')
+
+    resultsSection.appendChild(container)
+}
+
+function eraseResultsSection() {
+    resultsSection.innerHTML = ''
+}
+
+
+exerciseForm.addEventListener('submit', createExercise)
+deletionForm.addEventListener('submit', deleteExercise)
+counterForm.addEventListener('submit', addRep)

@@ -1,3 +1,5 @@
+const database = []
+
 module.exports = {
 
     getCompliment: (req, res) => {
@@ -18,41 +20,50 @@ module.exports = {
       
         res.status(200).send(randomFortune);
     },
+    ////----------
+    createExercise: (req, res) => {
+        const name = req.body.name
+        const repCount = req.body.repCount
 
-getGoals: (req, res) => res.status(200).send(goals),
-    deleteGoals: (req, res) => {
-        let index = goals.findIndex(elem => elem.id === +req.params.id)
-        goals.splice(index, 1)
-        res.status(200).send(goals)
-    },
-    createGoals: (req, res) => {
-        let { goal, timeframe, textBox, imageURL } = req.body
-        let newGoals = {
-            goal,
-            timeframe,
-            imageURL,
-            textBox
+        let highestId = 0
+        for (let i = 0; i < database.length; i++) {
+            if (database[i].id > highestId) {
+                highestId = database[i].id
+            }
         }
-       
-        res.status(200).send(goal)
-    },
-    updateGoals: (req, res) => {
-        let { id } = req.params
-        let { type } = req.body
-        let index = goals.findIndex(elem => +elem.id === +id)
+        highestId++
 
-        if (goals[index].days === 365 && type === 'plus') {
-            res.status(400).send('cannot go above 365')
-        } else if (goals[index].days === 0 && type === 'minus') {
-            res.status(400).send('cannot go below 0')
-        } else if (type === 'plus') {
-            goals[index].days++
-            res.status(200).send(goals)
-        } else if (type === 'minus') {
-            goals[index].days--
-            res.status(200).send(goals)
-        } else {
-            res.sendStatus(400)
+        let newExercise = {
+            name: name,
+            repCount: +repCount,
+            id: highestId,
         }
+
+        database.push(newExercise)
+        console.log(database)
+        res.status(200).send(database)
+    },
+    deleteExercise: (req, res) => {
+        let id = +req.params.id
+
+        for (let i = 0; i < database.length; i++) {
+            if (database[i].id === id) {
+                database.splice(i, 1)
+            }
+        }
+
+        res.status(200).send(database)
+    },
+    addRep: (req, res) => {
+        let {id} = req.query
+        id = +id
+
+        for (let i = 0; i < database.length; i++) {
+            if (database[i].id === id) {
+                database[i].repCount += 1
+            }
+        }
+
+        res.status(200).send(database)
     }
 }
